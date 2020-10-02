@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           ),
           primaryColor: Colors.cyan[400],
           accentColor: Colors.deepOrange[200]),
-      home: RegisterPage(),
+      home: ProductsPage(),
     );
   }
 }

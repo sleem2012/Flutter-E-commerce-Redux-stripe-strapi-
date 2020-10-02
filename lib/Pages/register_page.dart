@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -11,11 +12,15 @@ class RegisterPageState extends State<RegisterPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
-  bool _isSubmitting, _obscureText = true;
+  bool _isSubmitting,
+      _obscureText = true;
   String _username, _email, _password;
 
   Widget _showTitle() {
-    return Text('Register', style: Theme.of(context).textTheme.headline);
+    return Text('Register', style: Theme
+        .of(context)
+        .textTheme
+        .headline);
   }
 
   Widget _showUsernameInput() {
@@ -72,17 +77,22 @@ class RegisterPageState extends State<RegisterPage> {
           _isSubmitting == true
               ? CircularProgressIndicator(
               valueColor:
-              AlwaysStoppedAnimation(Theme.of(context).primaryColor))
+              AlwaysStoppedAnimation(Theme
+                  .of(context)
+                  .primaryColor))
               : RaisedButton(
               child: Text('Submit',
-                  style: Theme.of(context)
+                  style: Theme
+                      .of(context)
                       .textTheme
                       .body1
                       .copyWith(color: Colors.black)),
               elevation: 8.0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              color: Theme.of(context).primaryColor,
+              color: Theme
+                  .of(context)
+                  .primaryColor,
               onPressed: _submit),
           FlatButton(
               child: Text('Existing user? Login'),
@@ -108,14 +118,22 @@ class RegisterPageState extends State<RegisterPage> {
     final responseData = json.decode(response.body);
     if (response.statusCode == 200) {
       setState(() => _isSubmitting = false);
+      _storeUserData(responseData);
       _showSuccessSnack();
       _redirectUser();
       print(responseData);
     } else {
       setState(() => _isSubmitting = false);
-       final errorMsg = json.encode( responseData['message']);
+      final errorMsg = json.encode(responseData['message']);
       _showErrorSnack(errorMsg);
     }
+  }
+
+  void _storeUserData(responseData) async {
+    final prefs = await SharedPreferences.getInstance();
+    Map<String,dynamic> user = responseData['user'];
+    user.putIfAbsent('jwt', () => responseData['jwt']);
+    prefs.setString('user', json.encode(user));
   }
 
   void _showSuccessSnack() {
