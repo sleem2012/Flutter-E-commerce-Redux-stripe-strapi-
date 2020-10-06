@@ -12,15 +12,11 @@ class RegisterPageState extends State<RegisterPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
-  bool _isSubmitting,
-      _obscureText = true;
+  bool _isSubmitting, _obscureText = true;
   String _username, _email, _password;
 
   Widget _showTitle() {
-    return Text('Register', style: Theme
-        .of(context)
-        .textTheme
-        .headline);
+    return Text('Register', style: Theme.of(context).textTheme.headline);
   }
 
   Widget _showUsernameInput() {
@@ -76,24 +72,19 @@ class RegisterPageState extends State<RegisterPage> {
         child: Column(children: [
           _isSubmitting == true
               ? CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation(Theme
-                  .of(context)
-                  .primaryColor))
+                  valueColor:
+                      AlwaysStoppedAnimation(Theme.of(context).primaryColor))
               : RaisedButton(
-              child: Text('Submit',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .body1
-                      .copyWith(color: Colors.black)),
-              elevation: 8.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              color: Theme
-                  .of(context)
-                  .primaryColor,
-              onPressed: _submit),
+                  child: Text('Submit',
+                      style: Theme.of(context)
+                          .textTheme
+                          .body1
+                          .copyWith(color: Colors.black)),
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  color: Theme.of(context).primaryColor,
+                  onPressed: _submit),
           FlatButton(
               child: Text('Existing user? Login'),
               onPressed: () =>
@@ -113,7 +104,7 @@ class RegisterPageState extends State<RegisterPage> {
   void _registerUser() async {
     setState(() => _isSubmitting = true);
     http.Response response = await http.post(
-        'http://192.168.1.10:1337/auth/local/register',
+        'http://192.168.1.13:1337/auth/local/register',
         body: {"username": _username, "email": _email, "password": _password});
     final responseData = json.decode(response.body);
     if (response.statusCode == 200) {
@@ -124,14 +115,14 @@ class RegisterPageState extends State<RegisterPage> {
       print(responseData);
     } else {
       setState(() => _isSubmitting = false);
-      final errorMsg = json.encode(responseData['message']);
+      final String errorMsg = responseData['message'];
       _showErrorSnack(errorMsg);
     }
   }
 
   void _storeUserData(responseData) async {
     final prefs = await SharedPreferences.getInstance();
-    Map<String,dynamic> user = responseData['user'];
+    Map<String, dynamic> user = responseData['user'];
     user.putIfAbsent('jwt', () => responseData['jwt']);
     prefs.setString('user', json.encode(user));
   }
@@ -146,14 +137,14 @@ class RegisterPageState extends State<RegisterPage> {
 
   void _showErrorSnack(String errorMsg) {
     final snackbar =
-    SnackBar(content: Text(errorMsg, style: TextStyle(color: Colors.red)));
+        SnackBar(content: Text(errorMsg, style: TextStyle(color: Colors.red)));
     _scaffoldKey.currentState.showSnackBar(snackbar);
     throw Exception('Error registering: $errorMsg');
   }
 
   void _redirectUser() {
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, '/products');
+      Navigator.pushReplacementNamed(context, '/');
     });
   }
 

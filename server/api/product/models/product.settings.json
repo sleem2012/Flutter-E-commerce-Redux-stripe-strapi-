@@ -19,7 +19,7 @@
       "type": "decimal"
     },
     "picture": {
-      "collection": "file",
+      "model": "file",
       "via": "related",
       "allowedTypes": [
         "images",

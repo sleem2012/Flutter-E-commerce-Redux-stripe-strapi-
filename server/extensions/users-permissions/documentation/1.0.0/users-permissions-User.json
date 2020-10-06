@@ -1271,10 +1271,7 @@
                   "type": "number"
                 },
                 "picture": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "type": "string"
                 },
                 "user": {
                   "type": "string"
